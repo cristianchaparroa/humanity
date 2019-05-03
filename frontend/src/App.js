@@ -1,26 +1,47 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, {Component} from 'react';
 import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+import {connect, sendMessage} from "./api";
+import Header from "./components/header/Header";
+import MessageHistory from "./components/messageHistory/MessageHistory";
+
+ class App extends Component {
+   constructor(props) {
+
+     super(props);
+     this.state = {
+       messages: [],
+     }
+     connect();
+   }
+
+   componentDidMount() {
+
+     let callback = (message) => {
+       console.log("new message")
+       this.setState(
+         prevState => ({ messages: [...this.state.messages, message] })
+       )
+       console.log(this.state);
+     };
+
+     connect(callback);
+   }
+
+   send() {
+     console.log("hello");
+     sendMessage("hello");
+   }
+
+   render() {
+     return (
+       <div className="App">
+        <Header />
+        <MessageHistory messages={this.state.messages} />
+        <button onClick={this.send}>Hit</button>
+       </div>
+     );
+   }
+ }
 
 export default App;
