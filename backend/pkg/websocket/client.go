@@ -3,6 +3,7 @@ package websocket
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/gorilla/websocket"
 )
@@ -39,6 +40,7 @@ func (c *Client) Read() {
 
 // Message contains all the information througth a connection
 type Message struct {
-	Type int    `json:"type"`
-	Body string `json:"body"`
+	Type int       `json:"type"`
+	Body string    `json:"body"`
+	Time time.Time `json:"time"`
 }

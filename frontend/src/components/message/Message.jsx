@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import "./message.scss";
-
+import Moment from 'react-moment';
 
 class Message extends Component {
 
@@ -13,7 +13,10 @@ class Message extends Component {
   }
 
   render() {
-    return <div className="message">{this.state.message.body}</div>;
+    return <div className="message">
+        <div>{this.state.message.body}</div>
+        <Moment format="YYYY/MM/DD HH:mm:ss">{this.state.message.time}</Moment>
+    </div>;
   }
 }
 

@@ -1,6 +1,9 @@
 package websocket
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 // Pool manage the concurrent comunication
 type Pool struct {
@@ -37,7 +40,7 @@ func (p *Pool) Start() {
 
 			for c := range p.Clients {
 				fmt.Println(client)
-				m := Message{Type: 1, Body: "New User joined..."}
+				m := Message{Type: 1, Body: "New User joined...", Time: time.Now()}
 				c.Conn.WriteJSON(m)
 			}
 
@@ -46,7 +49,7 @@ func (p *Pool) Start() {
 			delete(p.Clients, client)
 			fmt.Println("Connection pool size: ", len(p.Clients))
 			for c := range p.Clients {
-				m := Message{Type: 1, Body: "User Disconnected"}
+				m := Message{Type: 1, Body: "User Disconnected", Time: time.Now()}
 				c.Conn.WriteJSON(m)
 			}
 			break
@@ -54,7 +57,7 @@ func (p *Pool) Start() {
 		case message := <-p.Broadcast:
 			fmt.Println("Sending message to all clients in this pool")
 			for c := range p.Clients {
-
+				message.Time = time.Now()
 				if err := c.Conn.WriteJSON(message); err != nil {
 
 					fmt.Println(err)
