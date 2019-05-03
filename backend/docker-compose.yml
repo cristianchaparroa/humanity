@@ -1,0 +1,11 @@
+postgres:
+  restart: always
+  image: sameersbn/postgresql:9.5-3
+  ports:
+    - "5432:5432"
+  environment:
+    - DEBUG=false
+
+    - DB_USER=humanity
+    - DB_PASS=humanity
+    - DB_NAME=humanity
