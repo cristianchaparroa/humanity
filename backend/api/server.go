@@ -65,7 +65,8 @@ func (s *ChatServer) SetupRoutes() {
 	store := sessions.NewCookieStore([]byte("secret"))
 	s.Router.Use(sessions.Sessions("mysession", store))
 	s.Router.Use(CORS())
-	s.Router.POST("/api/login", LoginHandler)
+
+	s.Router.POST("/api/login", LoginHandler(s.db))
 	s.Router.GET("/api/logout", LogoutHandler)
 
 	s.Router.GET("/ws", RoomHandler(pool))

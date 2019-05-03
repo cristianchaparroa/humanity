@@ -2,7 +2,8 @@ package models
 
 // Account represents the basic
 type Account struct {
-	Username string
-	Password string
+	ID       string `db:"id"`
+	Email    string `db:"email"`
+	Password string `db:"password"`
 	User     *User
 }
