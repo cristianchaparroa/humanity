@@ -22,7 +22,6 @@ let connect = callback => {
   socket.onerror = error => {
     console.log("Socket error: ", error);
   };
-
 }
 
 let sendMessage = msg => {

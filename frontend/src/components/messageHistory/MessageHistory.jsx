@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import "./messageHistory.scss";
+import Message from "../message/Message"; 
 
 class MessageHistory extends Component {
 
@@ -7,12 +8,11 @@ class MessageHistory extends Component {
     super(props)
   }
   render () {
-    const messages = this.props.messages.map( (message, index) => (
-        <p key={index}>{message.data} </p>
-    ));
+    const messages = this.props.messages.map( message => <Message message={message.data} />);
+
 
     return (
-      <div className="messageHistory">
+      <div className="message-history">
         <h2>Messages </h2>
         {messages}
       </div>
