@@ -3,10 +3,11 @@ package api
 import (
 	"database/sql"
 	"fmt"
-	"net/http"
 	"os"
 
 	"github.com/cristianchaparroa/humanity/backend/pkg/websocket"
+	"github.com/gin-gonic/contrib/sessions"
+	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
 )
 
@@ -21,12 +22,15 @@ type Server interface {
 
 // ChatServer tis the implementation of Server interface
 type ChatServer struct {
-	db *sql.DB
+	Router *gin.Engine
+	db     *sql.DB
 }
 
 // NewChatServer returns a pointer to ChatServer
 func NewChatServer() *ChatServer {
-	return &ChatServer{}
+
+	r := gin.Default()
+	return &ChatServer{Router: r}
 }
 
 // SetupDB is charge to initialize the database connection
@@ -58,15 +62,19 @@ func (s *ChatServer) SetupRoutes() {
 	pool := websocket.NewPool()
 	go pool.Start()
 
-	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
-		RoomHandler(pool, w, r)
-	})
+	store := sessions.NewCookieStore([]byte("secret"))
+	s.Router.Use(sessions.Sessions("mysession", store))
+	s.Router.Use(CORS())
+	s.Router.POST("/api/login", LoginHandler)
+	s.Router.GET("/api/logout", LogoutHandler)
+
+	s.Router.GET("/ws", RoomHandler(pool))
 
 }
 
 // Run start the server
 func (s *ChatServer) Run() {
-	http.ListenAndServe(":8080", nil)
+	s.Router.Run(":8080")
 }
 
 // Close all resources opened in the server

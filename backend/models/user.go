@@ -1,7 +1,7 @@
-package user
+package models
 
 // User represent the basic information for user
-// throug to the room
+// through to the room
 type User struct {
 	Name   string `db:"name"`
 	Gender string `db:"gender"`
