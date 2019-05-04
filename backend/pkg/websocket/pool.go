@@ -56,6 +56,9 @@ func (p *Pool) Start() {
 
 // RegisterClient ...
 func RegisterClient(p *Pool, client *Client) {
+
+	fmt.Println("--> RegisterClient")
+
 	p.Clients[client] = true
 	for c := range p.Clients {
 		fmt.Println(client)
@@ -63,15 +66,21 @@ func RegisterClient(p *Pool, client *Client) {
 		c.Conn.WriteJSON(m)
 	}
 
+	fmt.Println("<-- RegisterClient")
 }
 
 // UnregisterClient ...
 func UnregisterClient(p *Pool, client *Client) {
+
+	fmt.Println("--> UnregisterClient")
+
 	delete(p.Clients, client)
 	for c := range p.Clients {
 		m := Message{Type: 1, Body: "User Disconnected", Time: time.Now()}
 		c.Conn.WriteJSON(m)
 	}
+
+	fmt.Println("<-- UnregisterClient")
 }
 
 // BroadcastMessage ...
@@ -104,7 +113,7 @@ func BroadcastMessage(p *Pool, message Message) {
 			m.Time = time.Now()
 			m.ID = uuid.String()
 
-			fmt.Printf("--> message to send%#v ", m)
+			fmt.Printf("--> message to send: \n--> %#v \n", m)
 			if err := c.Conn.WriteJSON(m); err != nil {
 				fmt.Println(err)
 				return
