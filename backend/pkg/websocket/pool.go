@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/cristianchaparroa/humanity/backend/services"
+	"github.com/google/uuid"
 )
 
 // Pool manage the concurrent comunication
@@ -96,8 +97,10 @@ func BroadcastMessage(p *Pool, message Message) {
 	}
 
 	for c := range p.Clients {
+		uuid := uuid.New()
 
 		message.Time = time.Now()
+		message.ID = uuid.String()
 
 		for _, m := range ms {
 			m.Time = time.Now()

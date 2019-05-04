@@ -7,6 +7,7 @@ import MessageHistory from "./components/messageHistory/MessageHistory";
 import ChatInput from "./components/chatInput/ChatInput";
 
 
+import * as uuid from "uuid";
 
 class App extends Component {
    constructor(props) {
@@ -34,6 +35,7 @@ class App extends Component {
        this.setState(
          prevState => ({ messages: [...this.state.messages, ms] })
        )
+      
      };
 
      connect(this.connection,callback);
@@ -45,7 +47,8 @@ class App extends Component {
         let message = JSON.stringify({
           body: event.target.value,
           user_id: this.state.userId,
-          nickname: this.state.nickname
+          nickname: this.state.nickname,
+          id : uuid.v4()
         })
 
         sendMessage(this.connection,message);

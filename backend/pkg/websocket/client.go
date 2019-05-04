@@ -22,6 +22,7 @@ type Client struct {
 
 // Message contains all the information througth a connection
 type Message struct {
+	ID       string    `json:"id"`
 	Type     int       `json:"type"`
 	Body     string    `json:"body"`
 	UserID   string    `json:"user_id"`
