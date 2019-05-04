@@ -30,10 +30,9 @@ class App extends Component {
      this.connection = new WebSocket(wsUrl);
 
      let callback = (message) => {
-       console.log("new message")
-       console.log(message)
+       let ms = JSON.parse(message.data);
        this.setState(
-         prevState => ({ messages: [...this.state.messages, message] })
+         prevState => ({ messages: [...this.state.messages, ms] })
        )
      };
 
