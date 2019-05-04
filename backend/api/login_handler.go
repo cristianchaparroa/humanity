@@ -37,6 +37,9 @@ func LoginHandler(db *sql.DB) gin.HandlerFunc {
 
 		as := services.NewAccountService(db)
 		isLogin, acc := as.Login(u.Email, u.Password)
+
+		fmt.Printf("Is user in db:%v", (acc != nil))
+
 		if isLogin {
 			session.Set("email", u.Email) //In real world usage you'd set this to the users ID
 			session.Set("userId", acc.ID)

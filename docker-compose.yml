@@ -1,3 +1,4 @@
+
 postgres:
   restart: always
   image: sameersbn/postgresql:9.5-3
@@ -9,3 +10,15 @@ postgres:
     - DB_USER=humanity
     - DB_PASS=humanity
     - DB_NAME=humanity
+
+backend:
+  build:  ./backend
+  ports:
+    - "8080:8080"
+  links:
+      - postgres:postgres
+
+fronted:
+  build: ./frontend
+  ports:
+    - "80:80"

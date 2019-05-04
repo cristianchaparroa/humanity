@@ -40,7 +40,7 @@ func (s *ChatServer) SetupDB() {
 	dbName := os.Getenv("NAME_DB")
 	host := os.Getenv("HOST_DB")
 
-	datasource := fmt.Sprintf("postgres://%s:%s@%s/%s?sslmode=disable", user, pass, host, dbName)
+	datasource := fmt.Sprintf("postgresql://%s:%s@%s/%s?sslmode=disable", user, pass, host, dbName)
 	fmt.Println(datasource)
 
 	db, err := sql.Open("postgres", datasource)
