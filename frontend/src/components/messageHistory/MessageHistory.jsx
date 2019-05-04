@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import "./messageHistory.scss";
-import Message from "../message/Message"; 
+import Message from "../message/Message";
 
 class MessageHistory extends Component {
 

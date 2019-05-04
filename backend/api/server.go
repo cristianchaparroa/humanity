@@ -14,7 +14,6 @@ import (
 // Server defines the methods to server the application
 type Server interface {
 	SetupDB()
-	SetupRepositories()
 	SetupRoutes()
 	Run()
 	Close()
@@ -53,9 +52,6 @@ func (s *ChatServer) SetupDB() {
 	s.db = db
 }
 
-// SetupRepositories ...
-func (s *ChatServer) SetupRepositories() {}
-
 // SetupRoutes setup the endpoints availables in the backend
 func (s *ChatServer) SetupRoutes() {
 
@@ -69,7 +65,9 @@ func (s *ChatServer) SetupRoutes() {
 	s.Router.POST("/api/login", LoginHandler(s.db))
 	s.Router.GET("/api/logout", LogoutHandler)
 
-	s.Router.GET("/ws", RoomHandler(pool))
+	s.Router.GET("/ws/room", func(c *gin.Context) {
+		RoomHandler(pool, c.Writer, c.Request)
+	})
 
 }
 

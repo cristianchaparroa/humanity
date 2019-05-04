@@ -13,18 +13,12 @@ const routing = (
   <Router >
     <div>
       <Route exact path="/" component={Login} />
+      <Route exact path="/rooms" component={App} />
     </div>
   </Router>
 )
 
-ReactDOM.render(routing,
-  document.getElementById("root")
-);
-
-
-
-
-
+ReactDOM.render(routing,document.getElementById("root"));
 
 
 

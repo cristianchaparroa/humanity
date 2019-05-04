@@ -63,10 +63,6 @@ func isLogin(db *sql.DB, u UserLogin) bool {
 		return false
 	}
 
-	fmt.Println(u.Email)
-	fmt.Println(u.Password)
-	fmt.Println(account.ID)
-
 	if u.Password == account.Password {
 		return true
 	}
