@@ -97,13 +97,14 @@ func BroadcastMessage(p *Pool, message Message) {
 	}
 
 	for c := range p.Clients {
-		uuid := uuid.New()
-
-		message.Time = time.Now()
-		message.ID = uuid.String()
 
 		for _, m := range ms {
+
+			uuid := uuid.New()
 			m.Time = time.Now()
+			m.ID = uuid.String()
+
+			fmt.Printf("--> message to send%#v ", m)
 			if err := c.Conn.WriteJSON(m); err != nil {
 				fmt.Println(err)
 				return
