@@ -25,8 +25,9 @@ class App extends Component {
 
    componentDidMount() {
 
-
-     this.connection = new WebSocket('ws://localhost:8080/ws/room');
+     let wsUrl = encodeURI('ws://localhost:8080/ws/room?userId=' + this.state.userId + '&nickname='+ this.state.nickname + '');
+     console.log(wsUrl)
+     this.connection = new WebSocket(wsUrl);
 
      let callback = (message) => {
        console.log("new message")

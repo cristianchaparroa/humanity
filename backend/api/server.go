@@ -66,7 +66,8 @@ func (s *ChatServer) SetupRoutes() {
 	s.Router.GET("/api/logout", LogoutHandler)
 
 	s.Router.GET("/ws/room", func(c *gin.Context) {
-		RoomHandler(pool, c.Writer, c.Request)
+
+		RoomHandler(c, pool, c.Writer, c.Request)
 	})
 
 }

@@ -5,6 +5,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/cristianchaparroa/humanity/backend/models"
 	"github.com/gorilla/websocket"
 )
 
@@ -16,6 +17,8 @@ type Client struct {
 	Conn *websocket.Conn
 	// Pool Pointer to the pool which this client will be part
 	Pool *Pool
+
+	Account *models.Account
 }
 
 // Message contains all the information througth a connection
