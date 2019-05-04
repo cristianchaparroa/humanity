@@ -1,7 +1,6 @@
 package websocket
 
 import (
-	"fmt"
 	"log"
 	"time"
 
@@ -42,14 +41,10 @@ func (c *Client) Read() {
 		err := c.Conn.ReadJSON(&message)
 
 		message.Type = 1
-		fmt.Printf("New message incoming %#v: \n", message)
 
 		if err != nil {
 			log.Println(err)
 		}
-
 		c.Pool.Broadcast <- message
-		fmt.Printf("Message received %+v\n", message)
-
 	}
 }

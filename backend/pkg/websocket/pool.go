@@ -3,6 +3,8 @@ package websocket
 import (
 	"fmt"
 	"time"
+
+	"github.com/cristianchaparroa/humanity/backend/services"
 )
 
 // Pool manage the concurrent comunication
@@ -35,41 +37,76 @@ func (p *Pool) Start() {
 
 		select {
 		case client := <-p.Register:
-
-			p.Clients[client] = true
-			fmt.Println("Size of connection pool: ", len(p.Clients))
-
-			for c := range p.Clients {
-				fmt.Println(client)
-				m := Message{Type: 1, Body: fmt.Sprintf(" %s joined... ", client.Account.Nickname), Time: time.Now()}
-				c.Conn.WriteJSON(m)
-			}
-
+			RegisterClient(p, client)
 			break
 
 		case client := <-p.Unregister:
-
-			delete(p.Clients, client)
-			fmt.Println("Connection pool size: ", len(p.Clients))
-			for c := range p.Clients {
-				m := Message{Type: 1, Body: "User Disconnected", Time: time.Now()}
-				c.Conn.WriteJSON(m)
-			}
+			UnregisterClient(p, client)
 			break
 
 		case message := <-p.Broadcast:
-			fmt.Println("Sending message to all clients in this pool")
-			for c := range p.Clients {
-				message.Time = time.Now()
-				if err := c.Conn.WriteJSON(message); err != nil {
-
-					fmt.Println(err)
-					return
-				}
-			}
+			BroadcastMessage(p, message)
 			break
 
 		}
 
 	}
+}
+
+// RegisterClient ...
+func RegisterClient(p *Pool, client *Client) {
+	p.Clients[client] = true
+	for c := range p.Clients {
+		fmt.Println(client)
+		m := Message{Type: 1, Body: fmt.Sprintf(" %s joined... ", client.Account.Nickname), Time: time.Now()}
+		c.Conn.WriteJSON(m)
+	}
+
+}
+
+// UnregisterClient ...
+func UnregisterClient(p *Pool, client *Client) {
+	delete(p.Clients, client)
+	for c := range p.Clients {
+		m := Message{Type: 1, Body: "User Disconnected", Time: time.Now()}
+		c.Conn.WriteJSON(m)
+	}
+}
+
+// BroadcastMessage ...
+func BroadcastMessage(p *Pool, message Message) {
+
+	fmt.Println("--> BroadcastMessage Sending message to all clients in this pool")
+
+	ms := make([]Message, 0)
+	ms = append(ms, message)
+
+	text := message.Body
+	bs := services.NewBotService()
+	intent := bs.GetIntent(text)
+
+	if intent == services.StockIntent {
+		im := bs.Process(text)
+
+		m := Message{
+			Body:     im.RawMessage,
+			Nickname: "Bot",
+		}
+		ms = append(ms, m)
+	}
+
+	for c := range p.Clients {
+
+		message.Time = time.Now()
+
+		for _, m := range ms {
+			m.Time = time.Now()
+			if err := c.Conn.WriteJSON(m); err != nil {
+				fmt.Println(err)
+				return
+			}
+		}
+	}
+
+	fmt.Println("<-- BroadcastMessage")
 }

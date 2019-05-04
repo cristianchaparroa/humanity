@@ -11,7 +11,7 @@ import (
 
 // RoomHandler is in charge to server the web socket connection for
 func RoomHandler(c *gin.Context, pool *websocket.Pool, w http.ResponseWriter, r *http.Request) {
-	fmt.Println("RoomHandler")
+
 	fmt.Println(r.Host)
 
 	userID := c.Query("userId")
