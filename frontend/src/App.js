@@ -15,7 +15,6 @@ class App extends Component {
      this.state = {
        messages: [],
      }
-     connect();
    }
 
    componentDidMount() {

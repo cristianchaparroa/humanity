@@ -4,9 +4,6 @@ import Message from "../message/Message";
 
 class MessageHistory extends Component {
 
-  constructor(props) {
-    super(props)
-  }
   render () {
     const messages = this.props.messages.map( message => <Message message={message.data} />);
 

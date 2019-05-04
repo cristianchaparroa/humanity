@@ -3,7 +3,6 @@ import { Button, FormGroup, FormControl, FormLabel } from "react-bootstrap";
 import "./login.scss";
 
 import axios from 'axios';
-import PropTypes from 'prop-types'
 
 import {withRouter} from 'react-router-dom'
 
@@ -42,7 +41,7 @@ class Login extends Component {
       .then(function (response) {
         console.log(response);
 
-        if(response.status == 200){
+        if(response.status === 200){
           console.log("login! ");
 
           self.props.history.push(`/rooms`)

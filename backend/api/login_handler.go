@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/cristianchaparroa/humanity/backend/repositories"
+	"github.com/cristianchaparroa/humanity/backend/services"
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
@@ -29,17 +29,19 @@ func LoginHandler(db *sql.DB) gin.HandlerFunc {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
-		username := u.Email
-		password := u.Password
 
-		if strings.Trim(username, " ") == "" || strings.Trim(password, " ") == "" {
+		if strings.Trim(u.Email, " ") == "" || strings.Trim(u.Password, " ") == "" {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Parameters can't be empty"})
 			return
 		}
 
-		// TODO: use a repository to compare
-		if isLogin(db, u) {
-			session.Set("user", username) //In real world usage you'd set this to the users ID
+		as := services.NewAccountService(db)
+		isLogin, acc := as.Login(u.Email, u.Password)
+		if isLogin {
+			session.Set("email", u.Email) //In real world usage you'd set this to the users ID
+			session.Set("userId", acc.ID)
+			session.Set("nickname", acc.Nickname)
+
 			err := session.Save()
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate session token"})
@@ -52,20 +54,4 @@ func LoginHandler(db *sql.DB) gin.HandlerFunc {
 	}
 
 	return gin.HandlerFunc(fn)
-}
-
-// TODO: move it to a service layer
-func isLogin(db *sql.DB, u UserLogin) bool {
-	ar := repositories.NewAccountRepository(db)
-	account, err := ar.FindByEmail(u.Email)
-
-	if err != nil {
-		return false
-	}
-
-	if u.Password == account.Password {
-		return true
-	}
-
-	return false
 }
