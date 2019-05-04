@@ -44,7 +44,14 @@ class Login extends Component {
         if(response.status === 200){
           console.log("login! ");
 
-          self.props.history.push(`/rooms`)
+          var data = response.data
+
+          self.props.history.push({
+            pathname: '/room',
+            userId: data.user_id,
+            nickname:data.nickname
+          })
+
         }
       }).catch(function (error) {
         console.log(error);

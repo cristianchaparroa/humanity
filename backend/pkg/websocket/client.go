@@ -18,6 +18,15 @@ type Client struct {
 	Pool *Pool
 }
 
+// Message contains all the information througth a connection
+type Message struct {
+	Type     int       `json:"type"`
+	Body     string    `json:"body"`
+	UserID   string    `json:"user_id"`
+	Nickname string    `json:"nickname"`
+	Time     time.Time `json:"time"`
+}
+
 func (c *Client) Read() {
 	defer func() {
 		c.Pool.Unregister <- c
@@ -25,22 +34,19 @@ func (c *Client) Read() {
 	}()
 
 	for {
-		messageType, p, err := c.Conn.ReadMessage()
+		var message Message
+		// messageType, p, err := c.Conn.ReadMessage()
+		err := c.Conn.ReadJSON(&message)
+
+		message.Type = 1
+		fmt.Printf("New message incoming %#v: \n", message)
 
 		if err != nil {
 			log.Println(err)
 		}
-		message := Message{Type: messageType, Body: string(p)}
 
 		c.Pool.Broadcast <- message
 		fmt.Printf("Message received %+v\n", message)
 
 	}
-}
-
-// Message contains all the information througth a connection
-type Message struct {
-	Type int       `json:"type"`
-	Body string    `json:"body"`
-	Time time.Time `json:"time"`
 }

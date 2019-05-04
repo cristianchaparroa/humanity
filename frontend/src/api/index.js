@@ -1,8 +1,7 @@
 // api/index.js
 
-var socket = new WebSocket("ws://localhost:8080/ws/room");
 
-let connect = callback => {
+let connect = (socket,callback) => {
   console.log("Attempting connection");
 
   socket.onopen = () => {
@@ -10,8 +9,8 @@ let connect = callback => {
   };
 
   socket.onmessage = msg => {
+    console.log("onmessage")
     console.log(msg);
-    console.log(callback);
     callback(msg);
   }
 
@@ -24,9 +23,11 @@ let connect = callback => {
   };
 }
 
-let sendMessage = msg => {
+let sendMessage =(socket,msg) => {
   console.log("sending message: ", msg);
   socket.send(msg);
 }
+
+
 
 export { connect, sendMessage}

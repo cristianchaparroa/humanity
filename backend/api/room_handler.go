@@ -9,6 +9,7 @@ import (
 
 // RoomHandler is in charge to server the web socket connection for
 func RoomHandler(pool *websocket.Pool, w http.ResponseWriter, r *http.Request) {
+	fmt.Println("RoomHandler")
 	fmt.Println(r.Host)
 
 	conn, err := websocket.Upgrade(w, r)
@@ -23,5 +24,5 @@ func RoomHandler(pool *websocket.Pool, w http.ResponseWriter, r *http.Request) {
 	}
 
 	pool.Register <- client
-	client.Read()
+	go client.Read()
 }

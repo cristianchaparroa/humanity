@@ -24,12 +24,12 @@ func NewAccountRepository(db *sql.DB) *AccountRepository {
 
 // FindByEmail search an account by email
 func (r *AccountRepository) FindByEmail(email string) (*models.Account, error) {
-	query := `SELECT id,email, password FROM account WHERE email=$1`
+	query := `SELECT id,email, password, nickname FROM account WHERE email=$1`
 	row := r.db.QueryRow(query, email)
 
 	a := &models.Account{}
 
-	err := row.Scan(&a.ID, &a.Email, &a.Password)
+	err := row.Scan(&a.ID, &a.Email, &a.Password, &a.Nickname)
 
 	if err != nil {
 		fmt.Print(err)

@@ -10,30 +10,46 @@ import ChatInput from "./components/chatInput/ChatInput";
 
 class App extends Component {
    constructor(props) {
-
      super(props);
+     console.log("App")
+     console.log(props)
+
      this.state = {
        messages: [],
+       userId : this.props.history.location.userId,
+       nickname : this.props.history.location.nickname
      }
+
+     this.send = this.send.bind(this);
    }
 
    componentDidMount() {
 
+
+     this.connection = new WebSocket('ws://localhost:8080/ws/room');
+
      let callback = (message) => {
        console.log("new message")
+       console.log(message)
        this.setState(
          prevState => ({ messages: [...this.state.messages, message] })
        )
-       console.log(this.state);
      };
 
-     connect(callback);
+     connect(this.connection,callback);
    }
 
    send(event) {
      if(event.keyCode === 13) {
-       sendMessage(event.target.value);
-       event.target.value = "";
+
+        let message = JSON.stringify({
+          body: event.target.value,
+          user_id: this.state.userId,
+          nickname: this.state.nickname
+        })
+
+        sendMessage(this.connection,message);
+        event.target.value = "";
      }
 
    }

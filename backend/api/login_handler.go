@@ -46,7 +46,7 @@ func LoginHandler(db *sql.DB) gin.HandlerFunc {
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate session token"})
 			} else {
-				c.JSON(http.StatusOK, gin.H{"message": "Successfully authenticated user"})
+				c.JSON(http.StatusOK, gin.H{"message": "Successfully authenticated user", "user_id": acc.ID, "nickname": acc.Nickname})
 			}
 		} else {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Authentication failed"})
