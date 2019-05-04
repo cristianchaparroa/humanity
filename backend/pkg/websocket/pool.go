@@ -61,8 +61,9 @@ func RegisterClient(p *Pool, client *Client) {
 
 	p.Clients[client] = true
 	for c := range p.Clients {
+		uuid := uuid.New()
 		fmt.Println(client)
-		m := Message{Type: 1, Body: fmt.Sprintf(" %s joined... ", client.Account.Nickname), Time: time.Now()}
+		m := Message{ID: uuid.String(), Type: 1, Body: fmt.Sprintf(" %s joined... ", client.Account.Nickname), Time: time.Now()}
 		c.Conn.WriteJSON(m)
 	}
 
@@ -76,7 +77,8 @@ func UnregisterClient(p *Pool, client *Client) {
 
 	delete(p.Clients, client)
 	for c := range p.Clients {
-		m := Message{Type: 1, Body: "User Disconnected", Time: time.Now()}
+		uuid := uuid.New()
+		m := Message{ID: uuid.String(), Type: 1, Body: "User Disconnected", Time: time.Now()}
 		c.Conn.WriteJSON(m)
 	}
 
