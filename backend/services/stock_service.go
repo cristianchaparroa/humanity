@@ -30,17 +30,20 @@ type IStockService interface {
 
 // StockService ...
 type StockService struct {
+	Client *http.Client
 }
 
 // NewStockService retrieves a pointer to StockService
 func NewStockService() *StockService {
-	return &StockService{}
+
+	c := http.DefaultClient
+	return &StockService{Client: c}
 }
 
-// Parse ...
+// Parse retrieves the stock symbol related to stock command
 func (s *StockService) Parse(message string) string {
-	parts := strings.Fields(message)
-	command := parts[0]
+
+	command := strings.ReplaceAll(message, " ", "")
 	results := strings.Split(command, "=")
 	stock := results[1]
 	return stock
@@ -51,10 +54,12 @@ func (s *StockService) ReadCSV(url string) ([]*StockResponse, error) {
 
 	fmt.Printf("--> StockService:ReadCSV url:%s\n", url)
 
-	resp, err := http.Get(url)
+	resp, err := s.Client.Get(url)
+
 	if err != nil {
 		return nil, err
 	}
+
 	defer resp.Body.Close()
 
 	reader := csv.NewReader(resp.Body)
