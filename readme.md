@@ -37,6 +37,8 @@ Database
 
 To be able to run the application with  users toÂ login, you should run the script located in `backend/db/migrations` to do that you have two options. The fisrt is run the migrations `*.sql` the part inside that is just in up section. The second way is use the tool goose, then in the root of the backend directory run the command `goose up`. For this method check the credentials for your postgres connection in the file located in `backend/db/dbconfig.yml`
 
+Note: you must be sure that you are using in the `.env` file with the same config that is in `.env.dev.local`.
+
 #### Run
 
 The backend
@@ -53,6 +55,8 @@ npm start
 ## Deployment (local with Docker)
 
 If you have docker and docker compose in your system, you should be able to run the following command.
+
+Note: you must be sure that `.env` file is using the same configuration  like in `.env.dev.docker`
 ```
 docker-compose up
 ```
