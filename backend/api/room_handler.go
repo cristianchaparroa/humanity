@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/cristianchaparroa/humanity/backend/core/websocket"
 	"github.com/cristianchaparroa/humanity/backend/models"
-	"github.com/cristianchaparroa/humanity/backend/pkg/websocket"
 	"github.com/gin-gonic/gin"
 )
 

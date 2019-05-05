@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/cristianchaparroa/humanity/backend/pkg/websocket"
+	"github.com/cristianchaparroa/humanity/backend/core/websocket"
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
