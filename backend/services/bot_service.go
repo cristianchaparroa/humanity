@@ -23,16 +23,18 @@ type BootMessage struct {
 // IBotService ...
 type IBotService interface {
 	GetIntent(message string) string
-	Process(message string) string
+	Process(message string) *BootMessage
 }
 
 // BotService ...
 type BotService struct {
+	StockService IStockService
 }
 
 // NewBotService returns a pointer to BotService
 func NewBotService() *BotService {
-	return &BotService{}
+	ss := NewStockService()
+	return &BotService{StockService: ss}
 }
 
 // GetIntent ...
@@ -48,7 +50,7 @@ func (s *BotService) Process(message string) *BootMessage {
 	intent := s.GetIntent(message)
 
 	if intent == StockIntent {
-		ss := NewStockService()
+		ss := s.StockService
 		stock := ss.Parse(message)
 		res, err := ss.Quote(stock)
 

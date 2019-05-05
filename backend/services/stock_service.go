@@ -24,7 +24,7 @@ type StockResponse struct {
 // IStockService ...
 type IStockService interface {
 	Parse(message string) string
-	ReadCSV(url string) ([][]string, error)
+	ReadCSV(url string) ([]*StockResponse, error)
 	Quote(stock string) (*StockResponse, error)
 }
 
