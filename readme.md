@@ -1,6 +1,20 @@
 ## Humanity
 
 
+### Stack
+
+**Backend**:
+
+  - gin-gonic (https://github.com/gin-gonic/gin)
+  - gorilla websockets:  https://github.com/gorilla/websocket
+
+**Frontend**:
+  - Reactjs (without flux)
+
+**database**:
+  - postgresql
+
+
 ## Deployment (local)
 
 ### Requirements
@@ -33,7 +47,7 @@ cd fronted
 npm install
 ```
 
-Database
+**Database**
 
 To be able to run the application with  users toÂ login, you should run the script located in `backend/db/migrations` to do that you have two options. The fisrt is run the migrations `*.sql` the part inside that is just in up section. The second way is use the tool goose, then in the root of the backend directory run the command `goose up`. For this method check the credentials for your postgres connection in the file located in `backend/db/dbconfig.yml`
 
@@ -103,3 +117,11 @@ If you have installed `goose` in the root of backend directory you can run the t
 ```
 goose up
 ```
+
+
+## TODO:
+
+- Automate the database population
+- Add RabbitMQ for intents not identified
+- Fix the bugs reported in github
+- Add more test
