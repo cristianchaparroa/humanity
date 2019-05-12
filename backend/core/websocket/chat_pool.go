@@ -7,7 +7,8 @@ import (
 	"github.com/google/uuid"
 )
 
-// ChatPool manage the concurrent comunication
+// ChatPool implements the behavior to manage the concurrent comunication
+// throguth the chat
 type ChatPool struct {
 
 	// Register channel send to all clients the message
@@ -55,7 +56,7 @@ func (p *ChatPool) Start() {
 	}
 }
 
-// RegisterClient ...
+// RegisterClient adds a new client in the chat pool
 func (p *ChatPool) RegisterClient(client IClient) {
 
 	fmt.Println("--> RegisterClient")
@@ -72,7 +73,7 @@ func (p *ChatPool) RegisterClient(client IClient) {
 	fmt.Println("<-- RegisterClient")
 }
 
-// UnregisterClient ...
+// UnregisterClient removes a specific client in the chat pool
 func (p *ChatPool) UnregisterClient(client IClient) {
 
 	fmt.Println("--> UnregisterClient")
@@ -88,7 +89,7 @@ func (p *ChatPool) UnregisterClient(client IClient) {
 	fmt.Println("<-- UnregisterClient")
 }
 
-// BroadcastMessage ...
+// BroadcastMessage send a message to everybody in the chat pool
 func (p *ChatPool) BroadcastMessage(m Message) {
 
 	fmt.Println("--> BroadcastMessage Sending message to all clients in this ChatPool")
