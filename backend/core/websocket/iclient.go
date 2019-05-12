@@ -1,6 +1,7 @@
 package websocket
 
 import (
+	"github.com/cristianchaparroa/humanity/backend/models"
 	"github.com/gorilla/websocket"
 )
 
@@ -11,13 +12,19 @@ type IClient interface {
 	// GetID retrieves the client id
 	GetID() string
 
-	// GetPool returns the belongs pool
-	// TODO : decouple the pool an replace by IChatPool
-	GetPool() IChatPool
-
 	//  GetConnection retrieves the websocket connection
 	GetConnection() *websocket.Conn
 
+	// GetPool returns the belongs pool
+	GetPool() IChatPool
+
+	// GetUser returns the information related to user that
+	// uses the client connection
+	GetUser() *models.Account
+
 	// Read the message int the pool
 	Read()
+
+	// WriteMessage writes a message in the pool
+	WriteMessage(m interface{}) error
 }

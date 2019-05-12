@@ -23,21 +23,6 @@ type Client struct {
 	Account *models.Account
 }
 
-// GetID ...
-func (c *Client) GetID() string {
-	return c.ID
-}
-
-// GetPool ...
-func (c *Client) GetPool() IChatPool {
-	return c.Pool
-}
-
-// GetConnection ...
-func (c *Client) GetConnection() *websocket.Conn {
-	return c.Conn
-}
-
 // Read the message in the current connection
 func (c *Client) Read() {
 
@@ -59,4 +44,32 @@ func (c *Client) Read() {
 		bchann := c.Pool.GetBroadcastChann()
 		bchann <- message
 	}
+}
+
+// WriteMessage writes a message in the pool
+func (c *Client) WriteMessage(m interface{}) error {
+	conn := c.GetConnection()
+	err := conn.WriteJSON(m)
+	return err
+}
+
+// GetID retrieves the client id
+func (c *Client) GetID() string {
+	return c.ID
+}
+
+// GetPool returns the chat pool in wich is connected
+func (c *Client) GetPool() IChatPool {
+	return c.Pool
+}
+
+// GetConnection  returns the web socket connection.
+func (c *Client) GetConnection() *websocket.Conn {
+	return c.Conn
+}
+
+// GetUser returns the information related to user that
+// uses the client connection
+func (c *Client) GetUser() *models.Account {
+	return c.Account
 }

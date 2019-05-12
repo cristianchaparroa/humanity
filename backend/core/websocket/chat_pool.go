@@ -64,10 +64,10 @@ func (p *ChatPool) RegisterClient(client IClient) {
 	p.Clients[client] = true
 
 	for c := range p.Clients {
-		body := fmt.Sprintf(" %s joined... ", "")
+		name := c.GetUser().Nickname
+		body := fmt.Sprintf(" %s joined... ", name)
 		m := NewMessage(body, 1)
-		conn := c.GetConnection()
-		conn.WriteJSON(m)
+		c.WriteMessage(m)
 	}
 
 	fmt.Println("<-- RegisterClient")
@@ -80,10 +80,10 @@ func (p *ChatPool) UnregisterClient(client IClient) {
 
 	delete(p.Clients, client)
 	for c := range p.Clients {
-		body := "User Disconnected"
+		name := c.GetUser().Nickname
+		body := fmt.Sprintf("%s user Disconnected", name)
 		m := NewMessage(body, 1)
-		conn := c.GetConnection()
-		conn.WriteJSON(m)
+		c.WriteMessage(m)
 	}
 
 	fmt.Println("<-- UnregisterClient")
@@ -98,11 +98,7 @@ func (p *ChatPool) BroadcastMessage(m Message) {
 
 		m.Time = time.Now()
 		m.ID = uuid.New().String()
-
-		fmt.Printf("--> message to send: \n--> %#v \n", m)
-		conn := c.GetConnection()
-
-		if err := conn.WriteJSON(m); err != nil {
+		if err := c.WriteMessage(m); err != nil {
 			fmt.Println(err)
 			return
 		}
@@ -117,7 +113,7 @@ func (p *ChatPool) GetBroadcastChann() chan Message {
 	return p.Broadcast
 }
 
-// GetUnregisterChann retrieves the channel in wich is
+// GetUnregisterChann retrieves the channel in which is
 // unregisterd the clients
 func (p *ChatPool) GetUnregisterChann() chan IClient {
 	return p.Unregister
