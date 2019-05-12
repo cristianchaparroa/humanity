@@ -10,7 +10,7 @@ import (
 )
 
 // RoomHandler is in charge to server the web socket connection for
-func RoomHandler(c *gin.Context, pool *websocket.Pool, w http.ResponseWriter, r *http.Request) {
+func RoomHandler(c *gin.Context, pool websocket.IChatPool, w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println(r.Host)
 
@@ -30,7 +30,7 @@ func RoomHandler(c *gin.Context, pool *websocket.Pool, w http.ResponseWriter, r 
 		Pool:    pool,
 		Account: acc,
 	}
-
-	pool.Register <- client
+	registerChann := pool.GetRegisterChann()
+	registerChann <- client
 	go client.Read()
 }

@@ -7,44 +7,27 @@ import (
 	"github.com/google/uuid"
 )
 
-// IChatPool defines the methods to use in  the  pool of connections for a chat
-// over one room.
-type IChatPool interface {
-
-	// Start liste all events in the pool of connections
-	Start()
-
-	// Register a client in the pool
-	RegisterClient(client IClient)
-
-	// Unregister a client in the pool
-	UnregisterClient(client IClient)
-
-	// Broadcast send a message to all clients in the pool
-	BroadcastMessage(message Message)
-}
-
-// Pool manage the concurrent comunication
-type Pool struct {
+// ChatPool manage the concurrent comunication
+type ChatPool struct {
 
 	// Register channel send to all clients the message
 	// that a new client is joined
 	Register chan IClient
 
-	// Unregister channel unregister a user and notify the pool
+	// Unregister channel unregister a user and notify the ChatPool
 	// when a client is disconnected.
 	Unregister chan IClient
 
 	// Cients that are active/inactiv but not disconnected.
 	Clients map[IClient]bool
 
-	// Broadcast send a message to all client in the pool
+	// Broadcast send a message to all client in the ChatPool
 	Broadcast chan Message
 }
 
-// NewPool creates a pointer to Pool structure
-func NewPool() *Pool {
-	return &Pool{
+// NewChatPool creates a pointer to ChatPool structure
+func NewChatPool() *ChatPool {
+	return &ChatPool{
 		Register:   make(chan IClient),
 		Unregister: make(chan IClient),
 		Clients:    make(map[IClient]bool),
@@ -52,8 +35,8 @@ func NewPool() *Pool {
 	}
 }
 
-// Start will be able to listen all events in the pool of connections.
-func (p *Pool) Start() {
+// Start will be able to listen all events in the ChatPool of connections.
+func (p *ChatPool) Start() {
 	for {
 
 		select {
@@ -73,7 +56,7 @@ func (p *Pool) Start() {
 }
 
 // RegisterClient ...
-func (p *Pool) RegisterClient(client IClient) {
+func (p *ChatPool) RegisterClient(client IClient) {
 
 	fmt.Println("--> RegisterClient")
 
@@ -90,7 +73,7 @@ func (p *Pool) RegisterClient(client IClient) {
 }
 
 // UnregisterClient ...
-func (p *Pool) UnregisterClient(client IClient) {
+func (p *ChatPool) UnregisterClient(client IClient) {
 
 	fmt.Println("--> UnregisterClient")
 
@@ -106,15 +89,14 @@ func (p *Pool) UnregisterClient(client IClient) {
 }
 
 // BroadcastMessage ...
-func (p *Pool) BroadcastMessage(m Message) {
+func (p *ChatPool) BroadcastMessage(m Message) {
 
-	fmt.Println("--> BroadcastMessage Sending message to all clients in this pool")
+	fmt.Println("--> BroadcastMessage Sending message to all clients in this ChatPool")
 
 	for c := range p.Clients {
 
-		uuid := uuid.New()
 		m.Time = time.Now()
-		m.ID = uuid.String()
+		m.ID = uuid.New().String()
 
 		fmt.Printf("--> message to send: \n--> %#v \n", m)
 		conn := c.GetConnection()
@@ -126,4 +108,33 @@ func (p *Pool) BroadcastMessage(m Message) {
 	}
 
 	fmt.Println("<-- BroadcastMessage")
+}
+
+// GetBroadcastChann retrieves the channel in which is send
+// the messages in the ChatPool
+func (p *ChatPool) GetBroadcastChann() chan Message {
+	return p.Broadcast
+}
+
+// GetUnregisterChann retrieves the channel in wich is
+// unregisterd the clients
+func (p *ChatPool) GetUnregisterChann() chan IClient {
+	return p.Unregister
+}
+
+// GetRegisterChann retrieves the channel in wich is
+// registed the clients
+func (p *ChatPool) GetRegisterChann() chan IClient {
+	return p.Register
+}
+
+// GetClients retrieves the  clients in the chat ChatPool.
+func (p *ChatPool) GetClients() []IClient {
+	cs := make([]IClient, 0)
+
+	for c := range p.Clients {
+		cs = append(cs, c)
+	}
+
+	return cs
 }

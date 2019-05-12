@@ -55,7 +55,7 @@ func (s *ChatServer) SetupDB() {
 // SetupRoutes setup the endpoints availables in the backend
 func (s *ChatServer) SetupRoutes() {
 
-	pool := websocket.NewPool()
+	pool := websocket.NewChatPool()
 	go pool.Start()
 
 	store := sessions.NewCookieStore([]byte("secret"))

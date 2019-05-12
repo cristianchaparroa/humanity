@@ -7,24 +7,6 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-// IClient defines the methods that sould have a client
-// in the chat pool
-type IClient interface {
-
-	// GetID retrieves the client id
-	GetID() string
-
-	// GetPool returns the belongs pool
-	// TODO : decouple the pool an replace by IChatPool
-	GetPool() *Pool
-
-	//  GetConnection retrieves the websocket connection
-	GetConnection() *websocket.Conn
-
-	// Read the message int the pool
-	Read()
-}
-
 // Client specific to websocket connection.
 type Client struct {
 
@@ -35,7 +17,7 @@ type Client struct {
 	Conn *websocket.Conn
 
 	// Pool Pointer to the pool which this client will be part
-	Pool *Pool
+	Pool IChatPool
 
 	// Account information related to this client
 	Account *models.Account
@@ -47,7 +29,7 @@ func (c *Client) GetID() string {
 }
 
 // GetPool ...
-func (c *Client) GetPool() *Pool {
+func (c *Client) GetPool() IChatPool {
 	return c.Pool
 }
 
@@ -60,19 +42,21 @@ func (c *Client) GetConnection() *websocket.Conn {
 func (c *Client) Read() {
 
 	defer func() {
-		//pool := c.GetPool()
-		//c.Pool.Unregister <- c
+		pool := c.GetPool()
+
+		uchann := pool.GetUnregisterChann()
+		uchann <- c
 		c.Conn.Close()
 	}()
 
 	for {
 		var message Message
 		err := c.Conn.ReadJSON(&message)
-		message.Type = 1
 
 		if err != nil {
 			log.Println(err)
 		}
-		c.Pool.Broadcast <- message
+		bchann := c.Pool.GetBroadcastChann()
+		bchann <- message
 	}
 }
