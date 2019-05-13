@@ -23,9 +23,10 @@ func RoomHandler(c *gin.Context, pool websocket.IChatPool, w http.ResponseWriter
 		fmt.Fprintf(w, "%+v\n", err)
 	}
 
+	connection := websocket.NewConnection(conn)
 	client := &websocket.Client{
 		ID:      uuid.New().String(),
-		Conn:    conn,
+		Conn:    connection,
 		Pool:    pool,
 		Account: acc,
 	}

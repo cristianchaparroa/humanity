@@ -4,7 +4,6 @@ import (
 	"log"
 
 	"github.com/cristianchaparroa/humanity/backend/models"
-	"github.com/gorilla/websocket"
 )
 
 // Client specific to websocket connection.
@@ -14,7 +13,7 @@ type Client struct {
 	ID string
 
 	// Conn is  pointer to websocket.Conn
-	Conn *websocket.Conn
+	Conn IConnection
 
 	// Pool Pointer to the pool which this client will be part
 	Pool IChatPool
@@ -64,7 +63,7 @@ func (c *Client) GetPool() IChatPool {
 }
 
 // GetConnection  returns the web socket connection.
-func (c *Client) GetConnection() *websocket.Conn {
+func (c *Client) GetConnection() IConnection {
 	return c.Conn
 }
 

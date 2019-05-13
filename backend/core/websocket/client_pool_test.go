@@ -1,17 +1,17 @@
 package websocket
 
-import "testing"
+import (
+	"testing"
 
-type PoolMock struct{}
+	"github.com/cristianchaparroa/humanity/backend/models"
+	"github.com/google/uuid"
+)
 
-func (p *PoolMock) Start()                           {}
-func (p *PoolMock) RegisterClient(client IClient)    {}
-func (p *PoolMock) UnregisterClient(client IClient)  {}
-func (p *PoolMock) BroadcastMessage(message Message) {}
-func (p *PoolMock) GetBroadcastChann() chan Message  { return nil }
-func (p *PoolMock) GetUnregisterChann() chan IClient { return nil }
-func (p *PoolMock) GetRegisterChann() chan IClient   { return nil }
-func (p *PoolMock) GetClients() []IClient            { return nil }
+type MockConn struct{}
+
+func (m *MockConn) WriteJSON(o interface{}) error { return nil }
+func (m *MockConn) ReadJSON(o interface{}) error  { return nil }
+func (m *MockConn) Close() error                  { return nil }
 
 func TestNewChatPool(t *testing.T) {
 	cp := NewChatPool()
@@ -82,4 +82,26 @@ func GetClients(num int) []IClient {
 		cs = append(cs, &Client{})
 	}
 	return cs
+}
+
+func TestChatPoolRegisterClient(t *testing.T) {
+	cp := NewChatPool()
+	conn := &MockConn{}
+
+	fakeAcc := models.NewAccount("id-test-uuid", "e@test.com", "test-nickname")
+
+	client := &Client{
+		ID:      uuid.New().String(),
+		Conn:    conn,
+		Pool:    cp,
+		Account: fakeAcc,
+	}
+
+	cp.RegisterClient(client)
+	expectedClients := 1
+	resultClients := len(cp.Clients)
+
+	if resultClients != expectedClients {
+		t.Errorf("Expected %v clients, but get:%v", expectedClients, resultClients)
+	}
 }

@@ -2,7 +2,6 @@ package websocket
 
 import (
 	"github.com/cristianchaparroa/humanity/backend/models"
-	"github.com/gorilla/websocket"
 )
 
 // IClient defines the methods that sould have a client
@@ -13,7 +12,7 @@ type IClient interface {
 	GetID() string
 
 	//  GetConnection retrieves the websocket connection
-	GetConnection() *websocket.Conn
+	GetConnection() IConnection
 
 	// GetPool returns the belongs pool
 	GetPool() IChatPool
