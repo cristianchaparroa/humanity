@@ -38,7 +38,7 @@ The backend
 cd backend
 export GO111MODULE=on
 go mod download
-go tidy
+go mod tidy
 go build ./...
 ```
 
