@@ -57,9 +57,10 @@ func (p *ChatPool) Start() {
 }
 
 // RegisterClient adds a new client in the chat pool
-func (p *ChatPool) RegisterClient(client IClient) {
+func (p *ChatPool) RegisterClient(client IClient) []error {
 
 	fmt.Println("--> RegisterClient")
+	es := make([]error, 0)
 
 	p.Clients[client] = true
 
@@ -67,44 +68,58 @@ func (p *ChatPool) RegisterClient(client IClient) {
 		name := c.GetUser().Nickname
 		body := fmt.Sprintf(" %s joined... ", name)
 		m := NewMessage(body, 1)
-		c.WriteMessage(m)
+		err := c.WriteMessage(m)
+
+		if err != nil {
+			es = append(es, err)
+		}
 	}
 
 	fmt.Println("<-- RegisterClient")
+
+	return es
 }
 
 // UnregisterClient removes a specific client in the chat pool
-func (p *ChatPool) UnregisterClient(client IClient) {
+func (p *ChatPool) UnregisterClient(client IClient) []error {
 
 	fmt.Println("--> UnregisterClient")
+	es := make([]error, 0)
 
 	delete(p.Clients, client)
+
 	for c := range p.Clients {
 		name := c.GetUser().Nickname
 		body := fmt.Sprintf("%s user Disconnected", name)
 		m := NewMessage(body, 1)
-		c.WriteMessage(m)
+		err := c.WriteMessage(m)
+
+		if err != nil {
+			es = append(es, err)
+		}
 	}
 
 	fmt.Println("<-- UnregisterClient")
+	return nil
 }
 
 // BroadcastMessage send a message to everybody in the chat pool
-func (p *ChatPool) BroadcastMessage(m Message) {
+func (p *ChatPool) BroadcastMessage(m Message) []error {
 
 	fmt.Println("--> BroadcastMessage Sending message to all clients in this ChatPool")
+
+	es := make([]error, 0)
 
 	for c := range p.Clients {
 
 		m.Time = time.Now()
 		m.ID = uuid.New().String()
 		if err := c.WriteMessage(m); err != nil {
-			fmt.Println(err)
-			return
+			es = append(es, err)
 		}
 	}
-
 	fmt.Println("<-- BroadcastMessage")
+	return es
 }
 
 // GetBroadcastChann retrieves the channel in which is send

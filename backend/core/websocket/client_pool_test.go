@@ -7,11 +7,32 @@ import (
 	"github.com/google/uuid"
 )
 
-type MockConn struct{}
+type WSFackeConn struct{}
 
-func (m *MockConn) WriteJSON(o interface{}) error { return nil }
-func (m *MockConn) ReadJSON(o interface{}) error  { return nil }
-func (m *MockConn) Close() error                  { return nil }
+func (m *WSFackeConn) WriteJSON(o interface{}) error { return nil }
+func (m *WSFackeConn) ReadJSON(o interface{}) error  { return nil }
+func (m *WSFackeConn) Close() error                  { return nil }
+
+// GetClients generates a list of clients of size n
+func GetClients(num int) []IClient {
+	cs := make([]IClient, num)
+
+	for i := 0; i < num; i++ {
+		cs = append(cs, &Client{})
+	}
+	return cs
+}
+
+func CreateRandomClient(conn IConnection, cp IChatPool) IClient {
+	fakeAcc := models.NewAccount(uuid.New().String(), "e@test.com", "test-nickname")
+
+	return &Client{
+		ID:      uuid.New().String(),
+		Conn:    conn,
+		Pool:    cp,
+		Account: fakeAcc,
+	}
+}
 
 func TestNewChatPool(t *testing.T) {
 	cp := NewChatPool()
@@ -74,19 +95,9 @@ func TestChatPoolGetClients(t *testing.T) {
 	}
 }
 
-// GetClients generates a list of clients of size n
-func GetClients(num int) []IClient {
-	cs := make([]IClient, num)
-
-	for i := 0; i < num; i++ {
-		cs = append(cs, &Client{})
-	}
-	return cs
-}
-
 func TestChatPoolRegisterClient(t *testing.T) {
 	cp := NewChatPool()
-	conn := &MockConn{}
+	conn := &WSFackeConn{}
 
 	fakeAcc := models.NewAccount("id-test-uuid", "e@test.com", "test-nickname")
 
@@ -97,11 +108,57 @@ func TestChatPoolRegisterClient(t *testing.T) {
 		Account: fakeAcc,
 	}
 
-	cp.RegisterClient(client)
+	errs := cp.RegisterClient(client)
+
+	if len(errs) != 0 {
+		t.Errorf("It not expected errors but get:%#v: ", errs)
+	}
 	expectedClients := 1
 	resultClients := len(cp.Clients)
 
 	if resultClients != expectedClients {
 		t.Errorf("Expected %v clients, but get:%v", expectedClients, resultClients)
 	}
+}
+
+func TestChatPoolUnregisterClient(t *testing.T) {
+	cp := NewChatPool()
+	conn := &WSFackeConn{}
+
+	a := CreateRandomClient(conn, cp)
+	b := CreateRandomClient(conn, cp)
+	cp.RegisterClient(a)
+	cp.RegisterClient(b)
+
+	errs := cp.UnregisterClient(a)
+
+	if len(errs) != 0 {
+		t.Errorf("It not expected errors but get:%#v: ", errs)
+	}
+
+	expectedClients := 1
+	resultClients := len(cp.Clients)
+
+	if resultClients != expectedClients {
+		t.Errorf("Expected %v clients, but get:%v", expectedClients, resultClients)
+	}
+}
+
+func TestChatPoolBroadcastMessage(t *testing.T) {
+	cp := NewChatPool()
+	conn := &WSFackeConn{}
+
+	a := CreateRandomClient(conn, cp)
+	b := CreateRandomClient(conn, cp)
+	cp.RegisterClient(a)
+	cp.RegisterClient(b)
+
+	m := NewMessage("This is a message to broadcast", 1)
+
+	errs := cp.BroadcastMessage(m)
+
+	if len(errs) != 0 {
+		t.Errorf("It not expected errors but get:%#v: ", errs)
+	}
+
 }

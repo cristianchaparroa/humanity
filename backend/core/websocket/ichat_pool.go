@@ -8,13 +8,13 @@ type IChatPool interface {
 	Start()
 
 	// Register a client in the pool
-	RegisterClient(client IClient)
+	RegisterClient(client IClient) []error
 
 	// Unregister a client in the pool
-	UnregisterClient(client IClient)
+	UnregisterClient(client IClient) []error
 
 	// Broadcast send a message to all clients in the pool
-	BroadcastMessage(message Message)
+	BroadcastMessage(message Message) []error
 
 	// GetBroadcastChann retrieves the channel in which is send
 	// the messages in the pool
