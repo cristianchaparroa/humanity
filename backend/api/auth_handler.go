@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// AuthRequired verifies that the user in the system
+// AuthRequired verifies  the user in the system
 // still loged.
 func AuthRequired() gin.HandlerFunc {
 	return func(c *gin.Context) {

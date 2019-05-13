@@ -4,20 +4,18 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/cristianchaparroa/humanity/backend/core/websocket"
 	"github.com/cristianchaparroa/humanity/backend/models"
-	"github.com/cristianchaparroa/humanity/backend/pkg/websocket"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 // RoomHandler is in charge to server the web socket connection for
-func RoomHandler(c *gin.Context, pool *websocket.Pool, w http.ResponseWriter, r *http.Request) {
+func RoomHandler(c *gin.Context, pool websocket.IChatPool, w http.ResponseWriter, r *http.Request) {
 
-	fmt.Println(r.Host)
+	fmt.Println("--> RoomHandler")
 
-	userID := c.Query("userId")
-	nickname := c.Query("nickname")
-
-	acc := models.NewAccount(userID, "", nickname)
+	acc := getAccount(c)
 
 	conn, err := websocket.Upgrade(w, r)
 
@@ -25,12 +23,25 @@ func RoomHandler(c *gin.Context, pool *websocket.Pool, w http.ResponseWriter, r 
 		fmt.Fprintf(w, "%+v\n", err)
 	}
 
+	connection := websocket.NewConnection(conn)
 	client := &websocket.Client{
-		Conn:    conn,
+		ID:      uuid.New().String(),
+		Conn:    connection,
 		Pool:    pool,
 		Account: acc,
 	}
-
-	pool.Register <- client
+	registerChann := pool.GetRegisterChann()
+	registerChann <- client
 	go client.Read()
+
+	fmt.Println("<-- RoomHandler")
+}
+
+func getAccount(c *gin.Context) *models.Account {
+	userID := c.Query("userId")
+	nickname := c.Query("nickname")
+
+	acc := models.NewAccount(userID, "", nickname)
+
+	return acc
 }

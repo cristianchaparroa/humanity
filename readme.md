@@ -19,7 +19,7 @@
 
 ### Requirements
 
-The following are the requirements to deploy in a local enviroment
+The following are the requirements to deploy in a local environment
   - go (at least 1.12)
   - npm
   - postgres database
@@ -37,7 +37,9 @@ The backend
 ```
 cd backend
 export GO111MODULE=on
-go get -d -v ./...
+go mod download
+go mod tidy
+go build ./...
 ```
 
 The fronted

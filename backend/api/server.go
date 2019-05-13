@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/cristianchaparroa/humanity/backend/pkg/websocket"
+	"github.com/cristianchaparroa/humanity/backend/core/websocket"
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
@@ -55,7 +55,7 @@ func (s *ChatServer) SetupDB() {
 // SetupRoutes setup the endpoints availables in the backend
 func (s *ChatServer) SetupRoutes() {
 
-	pool := websocket.NewPool()
+	pool := websocket.NewChatPool()
 	go pool.Start()
 
 	store := sessions.NewCookieStore([]byte("secret"))
