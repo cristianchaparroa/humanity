@@ -1,7 +1,6 @@
 package api
 
 import (
-	"database/sql"
 	"fmt"
 	"net/http"
 	"strings"
@@ -9,6 +8,7 @@ import (
 	"github.com/cristianchaparroa/humanity/backend/services"
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
+	"github.com/jinzhu/gorm"
 )
 
 // UserLogin is an structure to check the login
@@ -18,7 +18,7 @@ type UserLogin struct {
 }
 
 // LoginHandler makes a basic login with user an password
-func LoginHandler(db *sql.DB) gin.HandlerFunc {
+func LoginHandler(db *gorm.DB) gin.HandlerFunc {
 
 	fn := func(c *gin.Context) {
 		fmt.Println("LoginHandler")

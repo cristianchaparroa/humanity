@@ -6,8 +6,10 @@ import (
 	"os"
 
 	"github.com/cristianchaparroa/humanity/backend/core/websocket"
+	"github.com/cristianchaparroa/humanity/backend/initializer"
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
+	"github.com/jinzhu/gorm"
 	_ "github.com/lib/pq"
 )
 
@@ -23,6 +25,7 @@ type Server interface {
 type ChatServer struct {
 	Router *gin.Engine
 	db     *sql.DB
+	gormDB *gorm.DB
 }
 
 // NewChatServer returns a pointer to ChatServer
@@ -43,13 +46,19 @@ func (s *ChatServer) SetupDB() {
 	datasource := fmt.Sprintf("postgresql://%s:%s@%s/%s?sslmode=disable", user, pass, host, dbName)
 	fmt.Println(datasource)
 
-	db, err := sql.Open("postgres", datasource)
+	//db, err := sql.Open("postgres", datasource)
+
+	db, err := gorm.Open("postgres", datasource)
 
 	if err != nil {
 		panic(err)
 	}
 
-	s.db = db
+	s.gormDB = db
+
+	im := initializer.NewInitialzerManager()
+	im.Run(s.gormDB)
+
 }
 
 // SetupRoutes setup the endpoints availables in the backend
@@ -62,14 +71,13 @@ func (s *ChatServer) SetupRoutes() {
 	s.Router.Use(sessions.Sessions("mysession", store))
 	s.Router.Use(CORS())
 
-	s.Router.POST("/api/login", LoginHandler(s.db))
+	s.Router.POST("/api/login", LoginHandler(s.gormDB))
 	s.Router.GET("/api/logout", LogoutHandler)
 
 	s.Router.GET("/ws/room", func(c *gin.Context) {
 
 		RoomHandler(c, pool, c.Writer, c.Request)
 	})
-
 }
 
 // Run start the server

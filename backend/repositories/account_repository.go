@@ -1,10 +1,8 @@
 package repositories
 
 import (
-	"database/sql"
-	"fmt"
-
 	"github.com/cristianchaparroa/humanity/backend/models"
+	"github.com/jinzhu/gorm"
 )
 
 // IAccountRepository ...
@@ -14,26 +12,21 @@ type IAccountRepository interface {
 
 // AccountRepository ...
 type AccountRepository struct {
-	db *sql.DB
+	db *gorm.DB
 }
 
 // NewAccountRepository generates a pointer to AccountRepository
-func NewAccountRepository(db *sql.DB) *AccountRepository {
+func NewAccountRepository(db *gorm.DB) *AccountRepository {
 	return &AccountRepository{db: db}
 }
 
 // FindByEmail search an account by email
 func (r *AccountRepository) FindByEmail(email string) (*models.Account, error) {
-	query := `SELECT id,email, password, nickname FROM account WHERE email=$1`
-	row := r.db.QueryRow(query, email)
+	//query := `SELECT id,email, password, nickname FROM account WHERE email=$1`
+	//row := r.db.QueryRow(query, email)
 
-	a := &models.Account{}
+	var a models.Account
+	r.db.Where("email = ?", email).First(&a)
 
-	err := row.Scan(&a.ID, &a.Email, &a.Password, &a.Nickname)
-
-	if err != nil {
-		fmt.Print(err)
-		return nil, err
-	}
-	return a, nil
+	return &a, nil
 }

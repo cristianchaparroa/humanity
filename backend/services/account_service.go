@@ -1,10 +1,9 @@
 package services
 
 import (
-	"database/sql"
-
 	"github.com/cristianchaparroa/humanity/backend/models"
 	"github.com/cristianchaparroa/humanity/backend/repositories"
+	"github.com/jinzhu/gorm"
 )
 
 // IAccountService defines the services related with accounts
@@ -14,11 +13,11 @@ type IAccountService interface {
 
 // AccountService implemtents ILoginService
 type AccountService struct {
-	db *sql.DB
+	db *gorm.DB
 }
 
 // NewAccountService generates a pointer to LoginService
-func NewAccountService(db *sql.DB) *AccountService {
+func NewAccountService(db *gorm.DB) *AccountService {
 	return &AccountService{db: db}
 }
 

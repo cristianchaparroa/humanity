@@ -16,4 +16,6 @@ func main() {
 	server.SetupDB()
 	server.SetupRoutes()
 	server.Run()
+
+	defer server.Close()
 }
