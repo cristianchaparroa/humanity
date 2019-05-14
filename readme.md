@@ -1,7 +1,7 @@
 ## Humanity
 
 
-### Stack
+### 1. Stack
 
 **Backend**:
 
@@ -13,66 +13,99 @@
 
 **database**:
   - postgresql
+  - orm: gorm
 
 
-## Deployment (local)
+## 2. Setup development environment
 
-### Requirements
+### 2.1. Requirements
 
 The following are the requirements to deploy in a local environment
   - go (at least 1.12)
   - npm
   - postgres database
-  - goose
   - Docker
   - Docker-compose
 
-### Install
+### 2.2. Install
+
+First of all you should download the back end and front end sources. You should clone the github repository (or use the .zip file sent).
 
 ```
 git clone https://github.com/cristianchaparroa/humanity
 ```
 
-The backend
+**The backend:**
+You should go to the backend directory after that remember set the `GO111MODULE` with `on` value to indicate to go environment that we'll use go modules.  Run the `download` command to get the direct dependencies and `tidy` to retrieve the indirect dependencies. If all is ok, you can run the `build` statement to compile the whole application.
 ```
 cd backend
 export GO111MODULE=on
 go mod download
 go mod tidy
-go build ./...
+go build .
 ```
 
-The fronted
+**The fronted:**
+
+You should be in the frontend directory and install all the dependencies with the command `npm install` after that it will be able to run.
 
 ```
 cd fronted
 npm install
 ```
 
-**Database**
+### 2.3.  Database
 
-To be able to run the application with  users toÂ login, you should run the script located in `backend/db/migrations` to do that you have two options. The fisrt is run the migrations `*.sql` the part inside that is just in up section. The second way is use the tool goose, then in the root of the backend directory run the command `goose up`. For this method check the credentials for your postgres connection in the file located in `backend/db/dbconfig.yml`
+You should modify the `.env` with` HOST_DB` variable pointing to localhost or the ip where is located your `Postgres` database.
 
-Note: you must be sure that you are using in the `.env` file with the same config that is in `.env.dev.local`.
 
-#### Run
+### 2.4.  Unit test
 
-The backend
+In favor of software quality we can run the unit tests  available using the following command:
+
+```
+cd backend
+go test ./...
+```
+
+If you want to know the **coverage** in the  project run the command:
+
+```
+ go test ./... -coverprofile cp.out
+```
+
+You'll have the  percentage covered for unit tests by folder in the stout and you will have `cp.out` file that we'll use to view in the browser what segments of code are covered. For that you should run:
+
+```
+go tool cover -html=cp.out
+```  
+
+**Note:** The point 2.2 must be executed correctly to run this step.
+
+
+
+### 2.5.  Run
+
+**The backend:**
+If the step 2.2 was ok, we can up the backend application with the following command:
 ```
 go run main.go
 ```
 
 
-The fronted
+**The fronted:**
+
+If all dependencies were install correctly we can up the fronted application with the following command:
 ```
 npm start
 ```
 
-## Deployment (local with Docker)
+## 3. Deployment with Docker
 
 If you have docker and docker compose in your system, you should be able to run the following command.
 
-Note: you must be sure that `.env` file is using the same configuration  like in `.env.dev.docker`
+**Note:** you must be sure that `.env` file has setup the `HOST_DB` pointing to `postgres` service.
+
 ```
 docker-compose up
 ```
@@ -80,50 +113,19 @@ docker-compose up
 If all is ok, you should be able to enter to the localhost and use the application.
 
 
-### Database population
+## 4. Application test
 
+You should test the application login  with the available profiles:
 
-#### Option 1.
+| Email | Password |
+| ------------- | ------------- |
+| cristianchaparroa@gmail.com| 12345 |
+| mauriciolopez@gmail.com | 12345  |
+| santiagocastro@gmail.com| 12345  |
+| merwinponce@gmail.com | 12345  |
 
-You must to make a connection to
-```
-host:localhost
-database:humanity
-user:humanity
-password: humanity
-```
+### TODO:
 
-After that you have the connection you should run the following script
-```sql
-CREATE TABLE account (
-    id          VARCHAR(255),
-    email       VARCHAR(255),
-    password    VARCHAR(255),
-    nickname    VARCHAR(255),
-    PRIMARY KEY(id)
-);
-
--- test users
-insert into account (id, email, password, nickname) values('65b1ece8-4ab9-4be5-b433-15494faf4743','cristianchaparroa@gmail.com','12345', 'ccchaparroa');
-insert into account (id, email, password, nickname) values('65b1ece8-4ab9-4be5-b433-15494faf4742','mauriciolopez@gmail.com','12345', 'mlopez');
-insert into account (id, email, password, nickname) values('65b1ece8-4ab9-4be5-b433-15494faf4741','santiagocastro@gmail.com','12345', 'scastro');
-insert into account (id, email, password, nickname) values('65b1ece8-4ab9-4be5-b433-15494faf4740','merwinponce@gmail.com','12345', 'mponce');
-
-commit;
-```
-
-#### Option 2.
-
-If you have installed `goose` in the root of backend directory you can run the the command:
-
-```
-goose up
-```
-
-
-## TODO:
-
-- Automate the database population
 - Add RabbitMQ for intents not identified
 - Fix the bugs reported in github
 - Add more test
