@@ -13,8 +13,6 @@ func main() {
 	}
 
 	server := api.NewChatServer()
-	server.SetupDB()
-	server.SetupRoutes()
 	server.Run()
 
 	defer server.Close()

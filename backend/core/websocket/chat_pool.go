@@ -5,11 +5,15 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/streadway/amqp"
 )
 
 // ChatPool implements the behavior to manage the concurrent comunication
 // throguth the chat
 type ChatPool struct {
+	ID string
+
+	Name string
 
 	// Register channel send to all clients the message
 	// that a new client is joined
@@ -24,11 +28,15 @@ type ChatPool struct {
 
 	// Broadcast send a message to all client in the ChatPool
 	Broadcast chan Message
+
+	// TODO: check how to decompose this implementation.
+	MQConn *amqp.Connection
 }
 
 // NewChatPool creates a pointer to ChatPool structure
 func NewChatPool() *ChatPool {
 	return &ChatPool{
+		ID:         uuid.New().String(),
 		Register:   make(chan IClient),
 		Unregister: make(chan IClient),
 		Clients:    make(map[IClient]bool),
@@ -149,4 +157,19 @@ func (p *ChatPool) GetClients() []IClient {
 	}
 
 	return cs
+}
+
+// GetID retrieves the ChatPool identificator
+func (p *ChatPool) GetID() string {
+	return p.ID
+}
+
+// GetName get the name of the current pool
+func (p *ChatPool) GetName() string {
+	return p.Name
+}
+
+// SetName set a new name for the current pool
+func (p *ChatPool) SetName(n string) {
+	p.Name = n
 }

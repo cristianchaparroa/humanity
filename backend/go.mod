@@ -12,5 +12,7 @@ require (
 	github.com/gorilla/websocket v1.4.0
 	github.com/jinzhu/gorm v1.9.8
 	github.com/joho/godotenv v1.3.0
+	github.com/kr/pretty v0.1.0 // indirect
 	github.com/lib/pq v1.1.1
+	github.com/streadway/amqp v0.0.0-20190404075320-75d898a42a94
 )

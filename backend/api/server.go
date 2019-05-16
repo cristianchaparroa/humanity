@@ -11,6 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	_ "github.com/lib/pq"
+	"github.com/streadway/amqp"
 )
 
 // Server defines the methods to server the application
@@ -26,6 +27,7 @@ type ChatServer struct {
 	Router *gin.Engine
 	db     *sql.DB
 	gormDB *gorm.DB
+	MQConn *amqp.Connection
 }
 
 // NewChatServer returns a pointer to ChatServer
@@ -61,10 +63,34 @@ func (s *ChatServer) SetupDB() {
 
 }
 
+// SetupQueue loads the connection params
+func (s *ChatServer) SetupQueue() {
+
+	user := os.Getenv("RABBITMQ_USER")
+	pass := os.Getenv("RABBITMQ_PASS")
+	host := os.Getenv("RABBITMQ_HOST")
+	port := os.Getenv("RABBITMQ_PORT")
+
+	dial := fmt.Sprintf("amqp://%s:%s@%s:%s/", user, pass, host, port)
+	fmt.Println(dial)
+
+	conn, err := amqp.Dial(dial)
+
+	if err != nil {
+		panic(err)
+	}
+	s.MQConn = conn
+
+}
+
 // SetupRoutes setup the endpoints availables in the backend
 func (s *ChatServer) SetupRoutes() {
 
+	// TODO: This ppol section section should move to another
+	// place when it will create multiples rooms
 	pool := websocket.NewChatPool()
+	pool.MQConn = s.MQConn
+
 	go pool.Start()
 
 	store := sessions.NewCookieStore([]byte("secret"))
@@ -82,6 +108,9 @@ func (s *ChatServer) SetupRoutes() {
 
 // Run start the server
 func (s *ChatServer) Run() {
+	s.SetupQueue()
+	s.SetupDB()
+	s.SetupRoutes()
 	s.Router.Run(":8080")
 }
 

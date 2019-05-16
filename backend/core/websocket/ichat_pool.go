@@ -30,4 +30,13 @@ type IChatPool interface {
 
 	// GetClients retrieves the  clients in the chat pool.
 	GetClients() []IClient
+
+	// GetID returns the identification of ChatPool
+	GetID() string
+
+	// GetName returns  the name of the chat rooom if is setup by some user.
+	GetName() string
+
+	// SetName establish the name of the chat room
+	SetName(n string)
 }
