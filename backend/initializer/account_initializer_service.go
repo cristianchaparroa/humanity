@@ -7,6 +7,7 @@ import (
 	"github.com/cristianchaparroa/humanity/backend/models"
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // AccountInitializerService implements the functions to works the first time
@@ -73,7 +74,16 @@ func (s *AccountInitializerService) PopulateTables() error {
 	// Insert the data
 	for _, acc := range data {
 
-		a := &models.Account{ID: acc.id, Email: acc.email, Password: acc.pass,
+		bytes, err := bcrypt.GenerateFromPassword([]byte(acc.pass), 0)
+
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+
+		bpass := string(bytes)
+
+		a := &models.Account{ID: acc.id, Email: acc.email, Password: bpass,
 			Nickname: acc.nickname, CreateAt: acc.createAt}
 
 		s.db.Create(a)

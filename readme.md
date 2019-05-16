@@ -59,7 +59,12 @@ npm install
 You should modify the `.env` with` HOST_DB` variable pointing to localhost or the ip where is located your `Postgres` database.
 
 
-### 2.4.  Unit test
+### 2.4.  RabbitMQ
+
+You should modify the `.env` with` RABBITMQ_HOST` variable pointing to localhost or the ip where is located your `RabbitMQ` service.
+
+
+### 2.5.  Unit test
 
 In favor of software quality we can run the unit tests  available using the following command:
 
@@ -84,7 +89,7 @@ go tool cover -html=cp.out
 
 
 
-### 2.5.  Run
+### 2.6.  Run
 
 **The backend:**
 If the step 2.2 was ok, we can up the backend application with the following command:
