@@ -4,6 +4,7 @@ import (
 	"github.com/cristianchaparroa/humanity/backend/models"
 	"github.com/cristianchaparroa/humanity/backend/repositories"
 	"github.com/jinzhu/gorm"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // IAccountService defines the services related with accounts
@@ -29,10 +30,12 @@ func (s *AccountService) Login(email, password string) (bool, *models.Account) {
 	if err != nil {
 		return false, nil
 	}
+	hashPass := []byte(account.Password)
+	err = bcrypt.CompareHashAndPassword(hashPass, []byte(password))
 
-	if password == account.Password {
-		return true, account
+	if err != nil {
+		return false, nil
 	}
 
-	return false, nil
+	return true, account
 }
