@@ -67,3 +67,15 @@ func (resp *TestResponseWriter) Hijack() (net.Conn, *bufio.ReadWriter, error) {
 	conn := fakeNetConn{strings.NewReader(""), &bytes.Buffer{}}
 	return conn, resp.brw, nil
 }
+
+// WSFackeConn is a Mock for websocket connection.
+type WSFackeConn struct{}
+
+// WriteJSON mocks the write a json in the websock connection
+func (m *WSFackeConn) WriteJSON(o interface{}) error { return nil }
+
+// ReadJSON mocks read a json that cames from the connection
+func (m *WSFackeConn) ReadJSON(o interface{}) error { return nil }
+
+// Close mocks close a websocket connection
+func (m *WSFackeConn) Close() error { return nil }

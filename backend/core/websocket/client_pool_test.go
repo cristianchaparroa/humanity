@@ -7,12 +7,6 @@ import (
 	"github.com/google/uuid"
 )
 
-type WSFackeConn struct{}
-
-func (m *WSFackeConn) WriteJSON(o interface{}) error { return nil }
-func (m *WSFackeConn) ReadJSON(o interface{}) error  { return nil }
-func (m *WSFackeConn) Close() error                  { return nil }
-
 // GetClients generates a list of clients of size n
 func GetClients(num int) []IClient {
 	cs := make([]IClient, num)
@@ -111,7 +105,7 @@ func TestChatPoolRegisterClient(t *testing.T) {
 	errs := cp.RegisterClient(client)
 
 	if len(errs) != 0 {
-		t.Errorf("It not expected errors but get:%#v: ", errs)
+		t.Errorf("It'll not expected errors but get:%#v: ", errs)
 	}
 	expectedClients := 1
 	resultClients := len(cp.Clients)

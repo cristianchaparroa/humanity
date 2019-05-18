@@ -15,8 +15,8 @@ type AccountInitializerService struct {
 	db *gorm.DB
 }
 
-// NewInitialzerService creates a pointer to AccountInitializerService
-func NewInitialzerService(db *gorm.DB) *AccountInitializerService {
+// NewAccInitialzerService creates a pointer to AccountInitializerService
+func NewAccInitialzerService(db *gorm.DB) *AccountInitializerService {
 	return &AccountInitializerService{db: db}
 }
 

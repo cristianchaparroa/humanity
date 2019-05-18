@@ -31,6 +31,9 @@ type ChatPool struct {
 
 	// TODO: check how to decompose this implementation.
 	MQConn *amqp.Connection
+
+	// TODO : abstract it
+	Q amqp.Queue
 }
 
 // NewChatPool creates a pointer to ChatPool structure
@@ -111,10 +114,35 @@ func (p *ChatPool) UnregisterClient(client IClient) []error {
 	return nil
 }
 
+// publishMessage is in charge to publish a message in the queue
+func (p *ChatPool) publishMessage(m Message) {
+	body := m.Body
+	fmt.Printf(" --> publishMessage:%s  \n", body)
+
+	ch, _ := p.MQConn.Channel()
+	err := ch.Publish(
+		"",       // exchange
+		p.Q.Name, // routing key
+		false,    // mandatory
+		false,    // immediate
+		amqp.Publishing{
+			ContentType: "text/plain",
+			Body:        []byte(body),
+		})
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println(" <-- publishMessage")
+}
+
 // BroadcastMessage send a message to everybody in the chat pool
 func (p *ChatPool) BroadcastMessage(m Message) []error {
 
 	fmt.Println("--> BroadcastMessage Sending message to all clients in this ChatPool")
+
+	p.publishMessage(m)
 
 	es := make([]error, 0)
 

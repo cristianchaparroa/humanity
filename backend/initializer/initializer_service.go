@@ -2,9 +2,9 @@ package initializer
 
 import "github.com/jinzhu/gorm"
 
-// InitializerService defines the operations that sould be performed the first time
+// InitService defines the operations that sould be performed the first time
 // that start the application.
-type InitializerService interface {
+type InitService interface {
 
 	//Execute
 	Execute() error
@@ -14,14 +14,17 @@ type InitializerService interface {
 type InitialzerManager struct {
 }
 
+// NewInitialzerManager generates  a pointer to InitialzerManager
 func NewInitialzerManager() *InitialzerManager {
 	return &InitialzerManager{}
 }
 
 // Run  should register all initializer and execute thems
 func (m *InitialzerManager) Run(db *gorm.DB) {
-	initializers := make([]InitializerService, 0)
-	initializers = append(initializers, NewInitialzerService(db))
+	initializers := make([]InitService, 0)
+
+	// Add all the initializer here.
+	initializers = append(initializers, NewAccInitialzerService(db))
 
 	for _, init := range initializers {
 		init.Execute()

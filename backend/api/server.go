@@ -91,7 +91,19 @@ func (s *ChatServer) SetupRoutes() {
 	pool := websocket.NewChatPool()
 	pool.MQConn = s.MQConn
 
+	ch, _ := s.MQConn.Channel()
+	q, _ := ch.QueueDeclare(
+		"room", // name
+		true,   // durable
+		true,   // delete when unused
+		false,  // exclusive
+		false,  // no-wait
+		nil,    // arguments
+	)
+
+	pool.Q = q
 	go pool.Start()
+	fmt.Println(q)
 
 	store := sessions.NewCookieStore([]byte("secret"))
 	s.Router.Use(sessions.Sessions("mysession", store))
